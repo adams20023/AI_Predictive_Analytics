@@ -3,7 +3,7 @@ name: CI/CD Pipeline
 on: [push]
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -14,16 +14,14 @@ jobs:
         python-version: '3.8'
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
         pip install -r requirements.txt
-    - name: Run tests
+    - name: AWS CLI Configure
       run: |
-        pytest
-    - name: Build Docker Image
+        pip install awscli
+        aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws configure set default.region us-east-1
+    - name: Deploy to EC2
       run: |
-        docker build -t <YourDockerHubUsername>/ai_predictive_analytics .
-    - name: Push to DockerHub
-      run: |
-        echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-        docker push <YourDockerHubUsername>/ai_predictive_analytics
+        ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_PUBLIC_IP }} "docker pull adams20023/ai_predictive_analytics && docker run -d -p 80:8000 adams20023/ai_predictive_analytics"
 
