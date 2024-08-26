@@ -1,0 +1,21 @@
+numpy
+pandas
+scikit-learn
+tensorflow
+torch  # Replace pytorch with torch
+flask
+dask
+prophet
+psycopg2-binary  # or psycopg2 if you're using Option 2 from the previous step
+pymongo
+fastapi
+uvicorn
+boto3
+sqlalchemy
+redis
+celery
+docker
+jupyterlab
+pytest
+locust
+
